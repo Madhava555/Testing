@@ -1,0 +1,117 @@
+<apex:page standardController="Environment_Request_Form__c" extensions="RequestformExtn">
+    
+     
+    <apex:pageMessages id="errormsg"/>
+    <apex:form id="form1">
+        <apex:sectionHeader title="New Environment Request Form" subtitle="Environment Request Form" /> 
+        <apex:pageBlock id="thisform">
+        <apex:pageBlockButtons >
+
+          <apex:actionStatus id="SaveButtonStatus">
+          <apex:facet name="stop">
+           <apex:outputPanel >
+            <apex:commandButton action="{!Save}" value="Save"  status="SaveButtonStatus" rerender="errormsg" />
+           </apex:outputPanel>
+           </apex:facet>
+           
+           <apex:facet name="start">         
+          
+           <apex:outputPanel id="out" rendered="{!IF(Environment_Request_Form__c.Request_Type__c != '' || Environment_Request_Form__c.Request_Type__c != '' || Environment_Request_Form__c.Request_Type__c != '' || Environment_Request_Form__c.Request_Type__c != '',true,false)}">
+                <apex:commandButton value="{!Environment_Request_Form__c.Request_Type__c} initiated" disabled="true" rendered="{!if(SaveClick != null,true,false)}" /> 
+           </apex:outputPanel>
+           </apex:facet>
+
+         </apex:actionStatus>
+         
+         
+         <apex:actionStatus id="CancelButtonStatus">
+          <apex:facet name="stop">
+           <apex:outputPanel >
+            <apex:commandButton action="{!DoCancel}" value="Cancel" status="CancelButtonStatus" rerender="form1,out1"/>
+           </apex:outputPanel>
+           </apex:facet>
+           
+           <apex:facet name="start">          
+          
+           <apex:outputPanel id="out1" rendered="{!IF(Environment_Request_Form__c.Request_Type__c != 'New Environment' || Environment_Request_Form__c.Request_Type__c != '' || Environment_Request_Form__c.Request_Type__c != '' || Environment_Request_Form__c.Request_Type__c != '',true,false)}">
+                <apex:commandButton value="{!Environment_Request_Form__c.Request_Type__c} cancelled" disabled="true" rendered="{!if(CancelClick != null,true,false)}"/>
+           </apex:outputPanel>
+           </apex:facet>
+
+         </apex:actionStatus>
+         
+                                                 
+       
+        </apex:pageBlockButtons>
+            
+            <apex:pageBlockSection columns="2" title="Request Information">
+                <apex:inputField value="{!Environment_Request_Form__c.Organization__c}"/>
+                <apex:inputField id="xxxif1" value="{!Environment_Request_Form__c.Request_Type__c}">
+            <apex:actionSupport event="onchange" rerender="thisform" />
+
+            </apex:inputField>
+                <apex:inputField value="{!Environment_Request_Form__c.Requester_Name__c}"/>
+                <apex:inputField value="{!Environment_Request_Form__c.Request_Status__c}"/>                
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection columns="2" title="Project Details" rendered="{!Environment_Request_Form__c.Request_Type__c == 'New Environment'}" id="projdetails">
+                    <apex:inputField value="{!Environment_Request_Form__c.Project_Name__c}"/>
+                    <apex:inputField value="{!Environment_Request_Form__c.Project_Owner__c}"/>
+                    <apex:inputField value="{!Environment_Request_Form__c.CP_FR__c}"/>
+                    <apex:inputField value="{!Environment_Request_Form__c.Planned_Go_Live__c}"/>     
+                    <apex:inputField value="{!Environment_Request_Form__c.Project_Description__c}"/>
+             </apex:pageBlockSection>
+            
+             <apex:pageBlockSection columns="2" title="Environment Details" rendered="{!IF(Environment_Request_Form__c.Request_Type__c == 'New Environment' || Environment_Request_Form__c.Request_Type__c == 'Environment Decommission' || Environment_Request_Form__c.Request_Type__c == 'Environment Refresh' || Environment_Request_Form__c.Request_Type__c == 'Environment Extension',true,false)}">
+                  <apex:inputField value="{!Environment_Request_Form__c.Environment_Name__c}" rendered="{!IF(Environment_Request_Form__c.Request_Type__c == 'New Environment',true,false)}" />
+                  <apex:inputField value="{!Environment_Request_Form__c.Environment_name_lookup__c}" rendered="{!IF(Environment_Request_Form__c.Request_Type__c == 'Environment Decommission' || Environment_Request_Form__c.Request_Type__c == 'Environment Refresh' || Environment_Request_Form__c.Request_Type__c == 'Environment Extension',true,false)}" >
+                  <apex:actionSupport event="onchange" action="{!EvnDetail}" rerender="projdetailsExtn"/><apex:actionSupport event="onchange" action="{!MyMethod}"/>
+                  </apex:inputField> 
+                  
+                  <apex:inputField value="{!env.Environment_name_lookup__r.Sandbox_Type__c}" rendered="{!IF(Environment_Request_Form__c.Request_Type__c == 'New Environment' || Environment_Request_Form__c.Request_Type__c =='Environment Extension' ,true,false)}"/>
+                  <apex:inputField value="{!Environment_Request_Form__c.Start_Date__c}" rendered="{!IF(Environment_Request_Form__c.Request_Type__c == 'New Environment' ||Environment_Request_Form__c.Request_Type__c == 'Environment Extension' ,true,false)}"/>
+                 <apex:inputField value="{!env.Environment_name_lookup__r.Sandbox_Owner__c}" rendered="{!IF(Environment_Request_Form__c.Request_Type__c == 'Environment Extension' ,true,false)}"/> 
+                  <apex:inputField value="{!env.End_Date__c}" rendered="{!IF(Environment_Request_Form__c.Request_Type__c == 'Environment Extension' ,true,false)}"/>
+                 <apex:inputField value="{!env.Environment_name_lookup__r.Version__c}" rendered="{!IF(Environment_Request_Form__c.Request_Type__c == 'Environment Extension' ,true,false)}"/> 
+                
+                 <apex:inputField value="{!env.Environment_name_lookup__r.Next_Refresh_Date__c}" rendered="{!IF(Environment_Request_Form__c.Request_Type__c == 'Environment Extension' ,true,false)}"/> 
+                 <apex:inputField value="{!env.Environment_name_lookup__r.Instance_Name__c}" rendered="{!IF(Environment_Request_Form__c.Request_Type__c == 'Environment Extension' ,true,false)}"/> 
+                 <apex:inputField value="{!env.Reason_For_Extension__c}" rendered="{!IF(Environment_Request_Form__c.Request_Type__c == 'Environment Extension' ,true,false)}"/> 
+                 
+                 <apex:inputField value="{!Environment_Request_Form__c.Reason_for_Decommission__c}" rendered="{!IF(Environment_Request_Form__c.Request_Type__c == 'Environment Decommission' ,true,false)}"/> 
+                 <apex:inputField value="{!env.Extension_Till__c}" rendered="{!IF(Environment_Request_Form__c.Request_Type__c == 'Environment Extension' ,true,false)}"/> 
+                 
+                 <!--<apex:outputLabel ></apex:outputLabel>-->
+                 
+                 <apex:outputLabel rendered="{!IF(Environment_Request_Form__c.Request_Type__c == 'Environment Extension' ,true,false)}">*Enter Project Details if you would like to use this environment for a differant Project</apex:outputLabel>
+                 <apex:outputLabel ></apex:outputLabel>
+            <apex:pageBlockSection columns="2" title="Project Details" rendered="{!Environment_Request_Form__c.Request_Type__c == 'Environment Extension'}" id="projdetailsExtn">
+                    <apex:inputField value="{!env.Project_Name__c}"/>
+                    <apex:inputField value="{!env.Project_Owner__c}"/>
+                    <apex:inputField value="{!env.CP_FR__c}"/>
+                    <apex:inputField value="{!env.Planned_Go_Live__c}"/>     
+                    <apex:inputField value="{!env.Project_Description__c}"/>
+             
+             </apex:pageBlockSection>
+            </apex:pageBlockSection>
+            
+            
+             <apex:pageBlockSection columns="2" title="Integration Details" rendered="{!Environment_Request_Form__c.Request_Type__c == 'New Environment'}">
+                <apex:inputField value="{!Environment_Request_Form__c.Integration_Required__c}"/>
+                <apex:inputField value="{!Environment_Request_Form__c.Integration_Systems__c}"/>
+            </apex:pageBlockSection>
+
+            
+            <apex:pageBlockSection columns="2" title="System Admin Details" rendered="{!Environment_Request_Form__c.Request_Type__c == 'New Environment'}">
+                  <apex:inputField value="{!Environment_Request_Form__c.First_Name__c}"/>
+                  <apex:inputField value="{!Environment_Request_Form__c.Last_Name__c}"/>
+                  <apex:inputField value="{!Environment_Request_Form__c.LAN_ID__c}"/>
+                  <apex:inputField value="{!Environment_Request_Form__c.Email_Id__c}"/>
+            </apex:pageBlockSection>
+            
+            
+   
+                        
+        </apex:pageBlock>>
+    </apex:form>
+</apex:page>

@@ -1,0 +1,61 @@
+<apex:page standardController="Proposed_Project__c" Extensions="ProjectEstimation" standardStylesheets="false" sidebar="false">
+ <style>
+     .whitebg1 { background-color: white; }
+.whiteBG { background-color: white; }
+        </style>
+    <script type="text/javascript">
+function closeWin() {
+    window.top.location.href="/{!$CurrentPage.parameters.id}";   // Closes the new window
+        }
+    </script>
+    <apex:pageMessages />
+    <apex:form >
+        <apex:pageBlock id="thisform"  >
+            <apex:pageBlockSection columns="3">
+                <apex:inputText value="{!Project_Manager}" label="Project Manager"/>
+                <apex:inputText Value="{!PM_Allocation}" label="Allocation %"/>
+                <apex:inputText Value="{!PM_Billing}" label="Billing Rate"/>
+                
+                <apex:inputField Value="{!Proposed_Project__c.Architects__c}" label="Technical Architect"/>
+                <apex:inputText Value="{!Architect_Allocation}" label="Allocation %"/>
+                <apex:inputText Value="{!Architect_Billing}" label="Billing Rate"/>
+                
+                <apex:inputField Value="{!Proposed_Project__c.BSA__c}" label="Business System Analyst"/>
+                <apex:inputText Value="{!BSA_Allocation}" label="Allocation %"/>
+                <apex:inputText Value="{!BSA_Billing}" label="Billing Rate"/>
+                
+                <apex:inputField Value="{!Proposed_Project__c.No_of_Developers__c}"/>
+                <apex:inputText Value="{!Dev_Allocation}" label="Allocation %"/>
+                <apex:inputText Value="{!Dev_Billing}" label="Billing Rate"/>
+                
+                <apex:inputField Value="{!Proposed_Project__c.No_of_QA_Engineers__c}"/>
+                <apex:inputText Value="{!QA_Allocation}" label="Allocation %"/>
+                <apex:inputText Value="{!QA_Billing}" label="Billing Rate"/>
+                                
+                <apex:inputField Value="{!Proposed_Project__c.Number_of_hours_per_day__c}"/>
+              	<apex:Outputtext />
+                <apex:Outputtext />
+                
+                <apex:inputText value="{!Weeks_per_Sprint}" Label="Sprint Duration(In Weeks)"/>
+
+           </apex:pageBlockSection>
+            <apex:pageBlock title="Estimation">
+                       
+                <apex:outputPanel styleClass="whiteBG" layout="block">
+            <apex:pageBlockSection columns="3">
+              <apex:outputText value="{!No_Of_Sprints}" Label="Number of Sprints"/>
+            
+                <apex:outputField Value="{!Proposed_Project__c.Number_of_weeks__c}" label="Release Duration(in Weeks)"/>
+
+                <apex:outputField Value="{!Proposed_Project__c.Total_Cost__c}"  label="Estimated Cost"/>
+                </apex:pageBlockSection>
+                    </apex:outputPanel>
+                </apex:pageBlock>
+                
+                    <apex:pageBlockButtons >
+            <apex:commandButton action="{!Calculate}" value="Estimate" />     
+            <apex:commandButton action="{!SavePlan}" value="Save"  rendered="{!IF(Proposed_Project__c.Number_of_weeks__c!=null,true,false)}" oncomplete="closeWin();"/>             
+        </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

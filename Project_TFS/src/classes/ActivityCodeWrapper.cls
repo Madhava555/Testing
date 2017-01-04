@@ -51,9 +51,7 @@ global class ActivityCodeWrapper implements Comparable {
         	} 
     	}
         
-        System.debug('***************** returnValue:' + returnValue);
-        System.debug('***************** returnValue:' + returnValue);
-        System.debug('***************** returnValue:' + returnValue);
+        System.debug('***************** returnValue:' + returnValue);        
         return returnValue;   
             
     }    
